@@ -50,10 +50,21 @@ class HIBPCli():
 
     def get_account_breach(
         self,
-        account_name : Union[str, int] = None
+        account_name : Union[str, int] = None,
+        full_response : bool = False,
+        domain_name : str = None,
+        exclude_unverified_breach : bool = False
         ):
+
+        query_params={
+            "truncateResponse" : not full_response,
+            "domain" : domain_name,
+            "includeUnverified" : not exclude_unverified_breach
+            }
+
         self._make_hibp_request(
-            parameter=account_name
+            parameter=account_name, 
+            query_params=query_params
         )
 
     def get_all_breaches():
