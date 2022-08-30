@@ -29,7 +29,7 @@ if __name__ == '__main__':
     hibp_cli = HIBPCli()
     hibp_cli.get_account_breach(
         account_name=input_cli_args.account_name,
-        full_response=input_cli_args.is_full_response,
+        is_full_response=input_cli_args.is_full_response,
         domain_name=input_cli_args.domain_name,
         exclude_unverified_breach=input_cli_args.exclude_unverified_breach
         )

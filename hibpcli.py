@@ -12,7 +12,7 @@ class HIBPCli():
 
     REQUEST_URI_DICT = {
         "get_account_breach"    : "breachedaccount",
-        "get_breaches"          : "breaches",
+        "get_all_breaches"      : "breaches",
         "get_breach"            : "breach"
     }
     def __init__(
@@ -51,13 +51,13 @@ class HIBPCli():
     def get_account_breach(
         self,
         account_name : Union[str, int] = None,
-        full_response : bool = False,
+        is_full_response : bool = False,
         domain_name : str = None,
         exclude_unverified_breach : bool = False
         ):
 
         query_params={
-            "truncateResponse" : not full_response,
+            "truncateResponse" : not is_full_response,
             "domain" : domain_name,
             "includeUnverified" : not exclude_unverified_breach
             }
