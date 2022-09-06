@@ -11,10 +11,10 @@ class HIBPCli():
     }
 
     REQUEST_URI_DICT = {
-        "get_account_breach"    : "breachedaccount",
-        "get_all_breaches"      : "breaches",
-        "get_breach"            : "breach"
+        "_get_account_breach"    : "breachedaccount",
+        "_get_all_breaches"      : "breaches",
     }
+
     def __init__(
         self,
         api_version : int = 3,
@@ -23,7 +23,7 @@ class HIBPCli():
 
     def _make_hibp_request(
         self,
-        parameter: Union[str, int] ,
+        parameter: Union[str, int] = None,
         query_params:dict = None
         ):
         hibp_rest_resource = self.REQUEST_URI_DICT.get(inspect.stack()[1][3])
@@ -31,10 +31,21 @@ class HIBPCli():
 
         if parameter is not None:
             hibp_url += f"/{parameter}"
-        print(hibp_url)
         
-        res = requests.get(hibp_url, params=query_params, headers=self.REQUEST_HEADER_DICT)
-        print(res.text)
+        headers = self.REQUEST_HEADER_DICT
+        hibp_response = self._execute_hibp_reqest(hibp_url, headers, query_params)
+        print(hibp_response.text)
+
+    # TODO: add exception handling
+    def _execute_hibp_reqest(
+        self,
+        hibp_url,
+        headers: dict = None,
+        query_params: dict = None
+        ):
+        res = requests.get(hibp_url, headers=headers, params=query_params)
+        return res
+
 
     def is_account_breached(
         self,
@@ -48,7 +59,7 @@ class HIBPCli():
     def _parse_paste():
         pass
 
-    def get_account_breach(
+    def get_breach(
         self,
         account_name : Union[str, int] = None,
         is_full_response : bool = False,
@@ -62,10 +73,19 @@ class HIBPCli():
             "includeUnverified" : not exclude_unverified_breach
             }
 
+        if not account_name:
+            self._get_all_breaches(query_params)
+        else:
+            self._get_account_breach(account_name, query_params)
+
+
+    def _get_all_breaches(self, query_params):
+        self._make_hibp_request(
+            query_params=query_params
+        )
+
+    def _get_account_breach(self, account_name, query_params):
         self._make_hibp_request(
             parameter=account_name, 
             query_params=query_params
         )
-
-    def get_all_breaches():
-        pass
