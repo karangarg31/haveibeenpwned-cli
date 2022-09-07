@@ -1,6 +1,7 @@
 from typing import Union
 import requests
 import inspect
+# from ratelimit import limits 
 
 class HIBPCli():
     HIBP_API_URL = "https://haveibeenpwned.com/api"
@@ -29,21 +30,25 @@ class HIBPCli():
         hibp_rest_resource = self.REQUEST_URI_DICT.get(inspect.stack()[1][3])
         hibp_url = f"{self.HIBP_API_URL}/v{self.HIBP_API_VERSION}/{hibp_rest_resource}"
 
-        if parameter is not None:
+        if parameter :
             hibp_url += f"/{parameter}"
         
         headers = self.REQUEST_HEADER_DICT
-        hibp_response = self._execute_hibp_reqest(hibp_url, headers, query_params)
+        hibp_response = self._execute_hibp_reqest(hibp_url, headers, query_params, parameter)
         print(hibp_response.text)
 
     # TODO: add exception handling
+    # @limits(calls=1, period=1)
     def _execute_hibp_reqest(
         self,
         hibp_url,
         headers: dict = None,
-        query_params: dict = None
+        query_params: dict = None,
+        parameter: Union[str, int] = None
         ):
         res = requests.get(hibp_url, headers=headers, params=query_params)
+        if not ( (res.status_code == 200) or (parameter and res.status_code == 404) ):
+            raise Exception(f"API Response code: {res.status_code} with error message: {res.text} for parameter: {parameter}")
         return res
 
 
@@ -51,12 +56,6 @@ class HIBPCli():
         self,
         account_name : Union[str, int] = None
         ):
-        pass
-
-    def _parse_breach():
-        pass
-
-    def _parse_paste():
         pass
 
     def get_breach(
