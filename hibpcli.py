@@ -1,6 +1,8 @@
 from typing import Union
 import requests
 import inspect
+
+from hibpres import HIBPRes
 # from ratelimit import limits 
 
 class HIBPCli():
@@ -35,7 +37,7 @@ class HIBPCli():
         
         headers = self.REQUEST_HEADER_DICT
         hibp_response = self._execute_hibp_reqest(hibp_url, headers, query_params, parameter)
-        print(hibp_response.text)
+        return hibp_response
 
     # TODO: add exception handling
     # @limits(calls=1, period=1)
@@ -65,7 +67,7 @@ class HIBPCli():
         domain_name : str = None,
         exclude_unverified_breach : bool = False
         ):
-
+        hibp_response = None
         query_params={
             "truncateResponse" : not is_full_response,
             "domain" : domain_name,
@@ -73,18 +75,19 @@ class HIBPCli():
             }
 
         if not account_name:
-            self._get_all_breaches(query_params)
+            hibp_response = self._get_all_breaches(query_params)
         else:
-            self._get_account_breach(account_name, query_params)
+            hibp_response = self._get_account_breach(account_name, query_params)
+        return HIBPRes(hibp_response.text)
 
 
     def _get_all_breaches(self, query_params):
-        self._make_hibp_request(
+        return self._make_hibp_request(
             query_params=query_params
         )
 
     def _get_account_breach(self, account_name, query_params):
-        self._make_hibp_request(
+        return self._make_hibp_request(
             parameter=account_name, 
             query_params=query_params
         )

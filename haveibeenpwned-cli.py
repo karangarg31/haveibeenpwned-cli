@@ -28,7 +28,7 @@ def _get_cli_args():
     return arg_parser.parse_known_args()
 
 def _get_breach(input_cli_args):
-    hibp_cli.get_breach(
+    return hibp_cli.get_breach(
         account_name=input_cli_args.account_name,
         is_full_response=input_cli_args.is_full_response,
         domain_name=input_cli_args.domain_name,
