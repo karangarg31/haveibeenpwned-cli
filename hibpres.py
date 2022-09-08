@@ -1,12 +1,11 @@
-from email import header
 import json
 from collections import OrderedDict
 from tabulate import tabulate
-import textwrap
+from datetime import datetime
 
 class HIBPRes():
     BREACH_MODEL = OrderedDict({
-        'Name'          : None,
+        'Name'          : 30,
         'Title'         : None,
         'Domain'        : None,
         'BreachDate'    : None,
@@ -25,6 +24,7 @@ class HIBPRes():
     })
 
     OPTIONAL_FIELDS = ["Name", "Description", "LogoPath"]
+    DATE_FIELDS = ["AddedDate", "ModifiedDate"]
 
     def __init__(self, res: str) -> None:
         self.datastr = res
@@ -49,6 +49,10 @@ class HIBPRes():
     def _get_formatted_breach_data(self, data_dict):
         # data_dict['Description'] = '\n'.join(textwrap.wrap(data_dict['Description']))
         data_dict['DataClasses'] = '\n'.join(data_dict['DataClasses'])
+        
+        for field_name in self.DATE_FIELDS:
+            data_dict[field_name] = datetime.strptime(data_dict[field_name], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d")
+        
         return data_dict
 
     def _filter_fields_from_data(self):
@@ -73,17 +77,17 @@ class HIBPRes():
     def __str__(self):
         return self._get_tabulated_data()
 
-    def print_json(self):
-        pass
-
     def print_table(self):
         print(self._get_tabulated_data())
 
-    def to_file():
+    def print_json(self):
         pass
 
-    def to_html(self):
+    def to_file(self, filetype, filename):
         pass
+
+    def to_html(self, filename):
+        self.to_file(filetype='html', filename=filename)
 
     def to_pdf(self):
-        pass
+        self.to_file(filetype='pdf', filename=filename)
