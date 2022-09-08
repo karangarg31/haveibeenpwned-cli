@@ -1,9 +1,9 @@
+from re import A
 from typing import Union
 import requests
 import inspect
 
 from hibpres import HIBPRes
-# from ratelimit import limits 
 
 class HIBPCli():
     HIBP_API_URL = "https://haveibeenpwned.com/api"
@@ -39,8 +39,6 @@ class HIBPCli():
         hibp_response = self._execute_hibp_reqest(hibp_url, headers, query_params, parameter)
         return hibp_response
 
-    # TODO: add exception handling
-    # @limits(calls=1, period=1)
     def _execute_hibp_reqest(
         self,
         hibp_url,
@@ -91,3 +89,6 @@ class HIBPCli():
             parameter=account_name, 
             query_params=query_params
         )
+
+    def list_fields(self):
+        return list(HIBPRes.BREACH_MODEL.keys())
