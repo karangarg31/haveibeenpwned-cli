@@ -23,7 +23,10 @@ class HIBPRes():
         'LogoPath'      : 30
     })
 
-    OPTIONAL_FIELDS = ["Name", "Description", "LogoPath"]
+    OPTIONAL_FIELDS = [
+        "Name", "Description", "LogoPath", "IsFabricated", "IsSensitive", "IsRetired",
+        "IsSpamList", "IsMalware"
+        ]
     DATE_FIELDS = ["AddedDate", "ModifiedDate"]
 
     def __init__(self, res: str) -> None:
@@ -47,8 +50,7 @@ class HIBPRes():
         return self.data[0].keys()
     
     def _get_formatted_breach_data(self, data_dict):
-        # data_dict['Description'] = '\n'.join(textwrap.wrap(data_dict['Description']))
-        data_dict['DataClasses'] = '\n'.join(data_dict['DataClasses'])
+        data_dict['DataClasses'] = ',\n'.join(data_dict['DataClasses'])
         
         for field_name in self.DATE_FIELDS:
             data_dict[field_name] = datetime.strptime(data_dict[field_name], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d")
@@ -64,12 +66,15 @@ class HIBPRes():
         data = self.data
         if not self.show_all_fields:
             data = self._filter_fields_from_data()
-        return map(self._get_formatted_breach_data, data)
+        return list(map(self._get_formatted_breach_data, data))
 
-    def _get_tabulated_data(self):
+    def _get_tabulated_data(self, fmt="pretty"):
+        data = self._get_output_data()
+        if len(data) == 0 :
+            return None
         return tabulate(
-            self._get_output_data(), 
-            tablefmt='pretty', 
+            data, 
+            tablefmt=fmt, 
             headers="keys", 
             maxcolwidths=list(self.BREACH_MODEL.values())
             )
@@ -81,13 +86,16 @@ class HIBPRes():
         print(self._get_tabulated_data())
 
     def print_json(self):
-        pass
+        data = None
+        if self.show_all_fields:
+            print(json.dumps(self.data))
+            return
+        print(json.dumps(self._filter_fields_from_data()))
 
     def to_file(self, filetype, filename):
-        pass
+        data = self._get_tabulated_data(fmt=filetype)
+        with open(filename, "w") as fh:
+            fh.write(data)
 
     def to_html(self, filename):
         self.to_file(filetype='html', filename=filename)
-
-    def to_pdf(self):
-        self.to_file(filetype='pdf', filename=filename)

@@ -27,7 +27,7 @@ def _get_and_validate_cli_args():
     arg_parser.add_argument('--show-all-fields', dest="show_all_fields", action="store_true", default=False, help="Show all fields. By default, fields Description and LogoPath are not shown. This may affect how data renders due to long values")
 
     output_format_argparse = arg_parser.add_mutually_exclusive_group()
-    output_format_argparse.add_argument('--output-format' , dest='output_format', default="table", choices=('json', 'table', 'pdf', 'html', 'quiet'), help="Output Format.")
+    output_format_argparse.add_argument('--output-format' , dest='output_format', default="table", choices=('json', 'table', 'html', 'quiet'), help="Output Format.")
     output_format_argparse.add_argument('--quiet' , dest='output_format', action='store_const', const='quiet', help="Does not print output. Exits with 0 if no breach found, 1 otherwise")
 
     arg_parser.add_argument('--file-name', action="store", dest="file_name", help="File name where to create a graphical report. Only considered for output format pdf or html")
@@ -37,7 +37,7 @@ def _get_and_validate_cli_args():
         arg_parser.error("No action requested. Need either --get-breaches or --list-fields")
     
     if not args.file_name and args.output_format in ('pdf', 'html'):
-        arg_parser.error("File Name is required if --output-format is pdf or html")
+        arg_parser.error("--file-name is required if --output-format is pdf or html")
     return args
 
 def _get_breach(args):
@@ -63,8 +63,8 @@ def _print_result(res, args):
 
     if args.output_format in ('pdf', 'html'):
         res.to_file(
-            type=args.output_format,
-            name=args.file_name,
+            filetype=args.output_format,
+            filename=args.file_name,
             )
         return
     
