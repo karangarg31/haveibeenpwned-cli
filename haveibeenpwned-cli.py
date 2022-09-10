@@ -12,7 +12,12 @@ from hibpcli import HIBPCli
 hibp_cli = HIBPCli()
 def _get_and_validate_cli_args():
     arg_parser = argparse.ArgumentParser(
-        description="Command Line Interface for haveibeenpwned.com",
+        description="""
+        Command Line Interface for haveibeenpwned.com. 
+        This can be used to get breaches for all accounts or for given specific accounts (--get-breach).
+        If you want the list of fields that this command returns, please use --list-fields option.
+        Please note, not all fields shown by --list-fields are returned by default. This behavior can be changed with command line args.
+        """,
         epilog="Hope you enjoy using it - Karan",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
         )
